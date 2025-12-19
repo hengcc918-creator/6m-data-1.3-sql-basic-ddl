@@ -4,3 +4,17 @@
   - https://www.sqltutorial.org/sql-cheat-sheet/
 - SQL Introduction
   - https://duckdb.org/docs/sql/introduction
+
+### Popular RDBMS
+
+- https://www.codecademy.com/article/what-is-rdbms-sql
+- https://db-engines.com/en/ranking
+
+### Why DuckDB?
+
+- https://hightouch.com/blog/duckdb
+- https://duckdb.org/why_duckdb
+
+### Set up DbGate for DuckDB
+
+- https://www.dbgate.io/databases/duckdb/

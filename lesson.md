@@ -12,7 +12,7 @@
 ---
 ## **Section 1: Fundamentals of Database Structure & Connections (1 Hour)**
 
-**Learning Objective:** By the end of this section, learners will be able to connect to a DuckDB database using DbGate and perform basic schema and table creation.
+**Learning Objective:** By the end of this section, learners will be able to connect to a DuckDB database using DbGate and perform basic schema and table creation, alter table and drop (delete) table.
 
 * **Theory Summary/Recap (10 min):**  
   * What is an RDBMS? Understanding the relationship between databases, schemas, and tables.
@@ -89,6 +89,7 @@ CREATE SCHEMA lesson;
 CREATE SCHEMA IF NOT EXISTS lesson;
 ```
 
+
 3. **Creating your first Table:**
 
    We will be creating a table `users` in the `lesson` schema. The table will have the following columns:
@@ -107,6 +108,7 @@ CREATE TABLE lesson.users (
 
 > If you just want to create tables in the default (`main`) schema, you can omit the `lesson.` prefix.
 
+
 4. **Basic Data Entry (DML basics for testing DDL):**
 
    We can insert data into the table using the `INSERT INTO` statement.
@@ -123,7 +125,42 @@ INSERT INTO lesson.users (id, name, email)
 VALUES (2, 'Jane Doe', 'jane.doe@gmail.com'),
        (3, 'John Smith', 'john.smith@gmail.com');
 ```
+
 > Insert two more rows with contiguously increasing `id` values, random `name`s and `email`s.
+
+5. **Alter Tables**
+
+We can alter the tables to add, rename or remove columns.
+
+Add column 'start_date' to table users.
+
+```sql
+ALTER TABLE lesson.users ADD COLUMN start_date DATE;
+```
+
+Rename column 'id' to 'uid' in table classes.
+
+```sql
+ALTER TABLE lesson.users RENAME id TO uid;
+```
+
+6. **TRUNCATE (Emptying the table) vs. DROP (Deleting the table):**
+
+
+
+```sql
+ALTER TABLE lesson.users
+DROP COLUMN email;
+```
+
+```sql
+TRUNCATE TABLE lesson.users;
+```
+
+```sql
+DROP TABLE lesson.users;
+```
+> **Tip: "Always run a SELECT before a DROP. Double-check your table name. It’s better to be slow and correct than fast and sorry."**
 
 * **Q\&A (10 min):** Addressing connection issues and terminology (Database vs. Schema).  
 * **Reflection (10 min):** Why is organizing data into schemas important in a production environment?
@@ -138,12 +175,19 @@ VALUES (2, 'Jane Doe', 'jane.doe@gmail.com'),
   * Constraints: Primary Keys (Uniqueness), Foreign Keys (Relationships), NOT NULL, CHECK, and DEFAULT.  
   * Understanding the School System ERD (Students, Teachers, Classes).
 
-> * `primary key` or `unique` define a column, or set of columns, that are a unique identifier for a row in the table.
-> * `primary key` constraints and unique constraints are identical except that a table can only have one primary key constraint defined, but many unique constraints and a primary key constraint also enforces the keys to not be NULL.
-> * `foreign key` defines a column, or set of columns, that refer to a primary key or unique constraint from another table. The constraint enforces that the key exists in the other table.
-> * `not null` specifies that the column cannot contain any NULL values. By default, all columns in tables are nullable.
-> * `default` specifies a default value for the column when no value is specified.
-> * `check` constraint allows you to specify an arbitrary boolean expression. Any columns that do not satisfy this expression violate the constraint.
+
+<details>
+  <summary>Primary Keys, Foreign Keys, NOT NULL, CHECK, and DEFAULT</summary>
+  
+  * `primary key` or `unique` define a column, or set of columns, that are a unique identifier for a row in the table.
+  * `primary key` constraints and unique constraints are identical except that a table can only have one primary key constraint defined, but many unique constraints and a primary key constraint also enforces the keys to not be NULL.
+  * `foreign key` defines a column, or set of columns, that refer to a primary key or unique constraint from another table. The constraint enforces that the key exists in the other table.
+  * `not null` specifies that the column cannot contain any NULL values. By default, all columns in tables are nullable.
+  * `default` specifies a default value for the column when no value is specified.
+  * `check` constraint allows you to specify an arbitrary boolean expression. Any columns that do not satisfy this expression violate the constraint.
+</details>
+
+
 
 * **Demo & Hands-on Workshop (30 min):**
 
@@ -209,30 +253,111 @@ Ref: classes.teacher_id > teachers.id // many-to-one
 ---
 ## **Section 3: Data Management & Performance (1 Hour)**
 
-**Learning Objective:** By the end of this section, learners will be able to improve query performance with indexes, manage database objects (Alter), and handle data imports/exports.
+**Learning Objective:** By the end of this section, learners will be able to import, update and export data, improve query performance with indexes, explain differences between tables and views. 
 
-* **Theory Summary/Recap (10 min):**  
+* **Theory Summary/Recap (10 min):**
+  * The COPY command for CSV/JSON handling.
   * What are Indexes? (Think of a book index for speed).  
   * Tables vs. Views (Physical storage vs. Virtual queries).  
-  * The COPY command for CSV/JSON handling.
+  
 
-> Indexes are used to improve the performance of queries. They are not required but are recommended for tables with many rows. They are used to _retrieve data from the database more quickly than otherwise_. Indexes are created using one or more columns of a database table. The users cannot see the indexes, they are just used to speed up searches/queries. 
+<details>
+  <summary>What are Indexes?</summary>
+  
+  Indexes are used to improve the performance of queries. They are not required but are recommended for tables with many rows. They are used to _retrieve data from the database more quickly than otherwise_. Indexes are created using one or more columns of a database table. The users cannot see the indexes, they are just used to speed up searches/queries.
+</details>
 
-> Tables and views are both ways to store data. What is the difference between them? A table is a physical copy of the data (materialized), while a view is a virtual copy of the data. A view is a query that is run on the fly when you access the view. A view is not stored in the database, but the query that defines the view is stored in the database.
+<details>
+  <summary>Tables vs. Views</summary>
+  
+  Tables and views are both ways to store data. What is the difference between them? A table is a physical copy of the data (materialized), while a view is a virtual copy of the data. A view is a query that is run on the fly when you access the view. A view is not stored in the database, but the query that defines the view is stored in the database.
+</details>
 
-* **Demo & Hands-on Workshop (30 min):**  
 
-1. **Creating Indexes & Views:**  
+
+* **Demo & Hands-on Workshop (30 min):**
+
+1. **Importing Data:**
+
+We can import data from a CSV file into a table.
+
+```sql
+COPY lesson.teachers FROM '/Users/fengfeng/Dev/6m-data-1.3-sql-basic-ddl/data/teachers.csv' (AUTO_DETECT TRUE);
+```
+
+> **Note:** For data import, use the full directory path to the CSV files, e.g. `/Users/fengfeng/Dev/6m-data-1.3-sql-basic-ddl/data/teachers.csv`
+
+2. **Exercise:**
+
+  Import data for `classes` and `students` tables. 
+
+
+4. **Updating Data:**
+
+   We can update the data in the table using the `UPDATE` statement.
+
+   Let's say `Linda Garcia` changed her email to `linda.g@example.com`, we can update the `email` of the student with id 4 (her id) to `linda.g@example.com`. The `WHERE` clause is used to specify which rows to update.
+
+```sql
+UPDATE lesson.students
+SET email = 'linda.g@example.com'
+WHERE id = 4;
+```
+  > This is DML, we will learn more in next lesson. 
+
+4. **Exporting Data:**
+
+  Let's export the data from the student table into a CSV file delimited with `|`.       Remember to prepend the full directory path to the CSV file.
+
+```sql
+COPY (SELECT * FROM lesson.students) TO '/Users/fengfeng/Dev/6m-data-1.3-sql-basic-ddl/data/students_new.csv' WITH (HEADER 1, DELIMITER '|');
+```
+
+  We can also export the data into a JSON file (you will learn more about JSON in Module 2).
+
+```sql
+COPY (SELECT * FROM lesson.students) TO '/Users/fengfeng/Dev/6m-data-1.3-sql-basic-ddl/data/students.json';
+```
+
+5. **Exercise:**
+
+  Repeat the above steps for the `teachers` & `classes` tables.
+
+
+
+6. **Creating Indexes:**
+
+  Indexes are used to improve the performance of queries. They are not required but are recommended for tables with many rows. They are used to _retrieve data from the database more quickly than otherwise_. Indexes are created using one or more columns of a database table. The users cannot see the indexes, they are just used to speed up searches/queries.
 
 ```sql
 -- Create a unique index 'teachers_name_idx' on the column name of table teachers.
 
 CREATE UNIQUE INDEX teachers_name_idx ON lesson.teachers(name);
+```
 
+
+```sql
 -- Create index 'students_name_idx' that allows for duplicate values on the column name of table students.
 
 CREATE INDEX students_name_idx ON lesson.students(name);
 ```
+
+```sql
+-- View indexes for a specific table
+SELECT index_name, sql 
+FROM duckdb_indexes 
+WHERE table_name = 'students';
+```
+
+7. **Tables vs Views:**
+
+  Tables and views are both ways to store data. What is the difference between them? A table is a physical copy of the data (materialized), while a view is a virtual copy of the data. A view is a query that is run on the fly when you access the view. A view is not stored in the database, but the query that defines the view is stored in the database.
+
+  We will be creating a view `students_view` in the `lesson` schema. The view will have the following columns:
+
+  - `id` - integer
+  - `name` - varchar
+  - `email` - varchar
 
 ```sql
 CREATE VIEW lesson.students_view AS
@@ -240,62 +365,10 @@ SELECT id, name, email
 FROM lesson.students;
 ```
 
-2. **Modifying Structure (Alter):**
+8. **Exercise:**
 
-We can alter the tables to add, rename or remove columns.
-
-Add column 'start_date' to table classes.
-
-```sql
-ALTER TABLE lesson.classes ADD COLUMN start_date DATE;
-```
-
-Rename column 'name' to 'code' in table classes.
-
-```sql
-ALTER TABLE lesson.classes RENAME name TO code;
-```
-
-3. **Importing/Exporting Data:**
-
-We can import data from a CSV file into a table.
-
-```sql
-COPY table_name FROM 'file_name.csv' (AUTO_DETECT TRUE);
-```
-
-Open [data/import.sql](./data/import.sql) which is the SQL script that contains the import data statements for the 3 tables. Prepend the full directory path to the CSV files, e.g. `/path/to/directory/6m-data-1.3-sql-basic-ddl/data/teachers.csv`
-
-Let's export the data from the student table into a CSV file delimited with `|`. Remember to prepend the full directory path to the CSV file.
-
-```sql
-COPY (SELECT * FROM lesson.students) TO 'students_new.csv' WITH (HEADER 1, DELIMITER '|');
-```
-
-We can also export the data into a JSON file (you will learn more about JSON in Module 2).
-
-```sql
-COPY (SELECT * FROM lesson.students) TO 'students.json';
-```
-
-> Repeat the above steps for the `teachers` table.
-
-4. **TRUNCATE (Emptying the table) vs. DROP (Deleting the table):**
-
-**Tip: "Always run a SELECT before a DROP. Double-check your table name. It’s better to be slow and correct than fast and sorry."**
-
-```sql
-ALTER TABLE lesson.users
-DROP COLUMN email;
-```
-
-```sql
-TRUNCATE TABLE users;
-```
-
-```sql
-DROP TABLE lesson.users;
-```
+  Create a view `teachers_view` with the same columns as `students_view` but for the `teachers` table.
+   
 
 
 * **Q\&A (10 min):** When should you *not* use an index? Difference between dropping a table vs. deleting data.  

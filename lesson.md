@@ -58,7 +58,7 @@ We will be using two modern, lightweight tools:
 
 
 ---
-#### **🟢 Activity 1: The "Profile" Table (Code-Along) (20 Mins)**
+#### **🟢 Activity 1: The "Profile" Table (Code-Together) (20 Mins)**
    
 1. **Connecting to the Database:**
   
@@ -172,9 +172,18 @@ DROP TABLE lesson.users;
 * **Reflection:** Why is organizing data into schemas important in a production environment?
 
 ---
-## **Section 2: Building Relationships & Constraints**
+## **Section 2: The Blueprint - Building Relationships & Constraints**
 
-**Learning Objective:** By the end of this section, learners will be able to translate an Entity Relationship Diagram (ERD) into SQL tables using primary keys, foreign keys, and data constraints.
+**Goal:** Translate a diagram (ERD) into code that enforces rules.
+
+#### **2.1 The Narrative**
+
+"In Excel, you can type 'Banana' into a column meant for Prices. Excel doesn't care. Databases *do* care. We are the architects, and we need to install 'Bouncers' at the door. These bouncers are called **Constraints**. If you try to enter a duplicate User ID? **Blocked.** If you try to enter a Class for a Teacher that doesn't exist? **Blocked.**"
+
+#### **2.2 Concept: The Keys**
+
+* **Primary Key (PK):** The Fingerprint. Unique and Not Null.  
+* **Foreign Key (FK):** The Link. It points to a PK in another table.
 
 * **Theory Summary/Recap:**  
   * Constraints: Primary Keys (Uniqueness), Foreign Keys (Relationships), NOT NULL, CHECK, and DEFAULT.  
@@ -191,9 +200,13 @@ DROP TABLE lesson.users;
   * `check` constraint allows you to specify an arbitrary boolean expression. Any columns that do not satisfy this expression violate the constraint.
 </details>
 
-* **Demo & Hands-on Workshop:**
+#### **🟢 Activity 2: The "Missing Link" Challenge (25 Mins)**
+
+**Scenario:** The Instructor builds the `teachers` and `classes` tables. The students must independently build the `students` table based on the ERD.
+
+**Part A: Instructor Demo (Code Together)**
  
-1. **Creating Tables with Constraints:**  
+**Creating Tables with Constraints:**  
 ```sql
 CREATE TABLE lesson.teachers (
   id INTEGER PRIMARY KEY, -- primary key
@@ -211,7 +224,9 @@ CREATE TABLE lesson.classes (
 );
 ```
 
-2. **Exercise:** Complete the CREATE TABLE statement for the students table based on the ERD (Entity-Relationship Diagram) below.
+**Part B: Learner Challenge**
+
+Complete the CREATE TABLE statement for the students table based on the ERD (Entity-Relationship Diagram) below.
 
 > In a school system whose classes have students and teachers. Each student belongs to a single class. Each teacher may teach more than one class, but each class only has one teacher.
 
@@ -250,14 +265,19 @@ Ref: classes.teacher_id > teachers.id // many-to-one
 
 
 ---
-## **Section 3: Data Management & Performance**
+## **Section 3: The Pipeline - Data Management & Performance**
 
-**Learning Objective:** By the end of this section, learners will be able to import, update and export data, improve query performance with indexes, explain differences between tables and views. 
+**Goal:** Manage data efficiency and bulk loading.
 
-* **Theory Summary/Recap:**
-  * The COPY command for CSV/JSON handling.
-  * What are Indexes? (Think of a book index for speed).  
-  * Tables vs. Views (Physical storage vs. Virtual queries).  
+#### **3.1 The Narrative**
+
+"We have empty tables. Typing `INSERT INTO...` one row at a time is fine for 10 rows. It is impossible for 1 million rows. As Data Scientists, you will often receive a 'dump'—a massive CSV file from a client. You need to get that into your SQL environment instantly. We use the **COPY** command. It is the industrial vacuum cleaner of SQL."
+
+#### **3.2 Concept: Views vs. Tables**
+
+* **Table:** Physical storage. Takes up hard drive space.  
+* **View:** A "Saved Search", a virtual query, it runs every time you look at it. Good for simplifying complex joins.
+* **Indexes** Think of a book index for speed. 
   
 
 <details>
@@ -274,7 +294,7 @@ Ref: classes.teacher_id > teachers.id // many-to-one
 
 
 
-* **Demo & Hands-on Workshop:**
+#### **🟢 Activity 3: The CSV Dump (Real-World Task, Code Together)**
 
 1. **Importing Data:**
 
@@ -322,11 +342,11 @@ COPY (SELECT * FROM lesson.students) TO '<full directory path>';
 -- example <full directory path>:  /Users/fengfeng/Dev/6m-data-1.3-sql-basic-ddl/data/students.json
 ```
 
-5. **Exercise:**
+5. **Learner Challenge**
 
   * Repeat the above steps for the `teachers` & `classes` tables.
 
-
+#### **🟢 Activity 4: Index, Table & View (Code Together)**
 
 6. **Creating Indexes:**
 
@@ -336,15 +356,11 @@ COPY (SELECT * FROM lesson.students) TO '<full directory path>';
    * Indexes are used to improve the performance of queries. They are not required but are recommended for tables with many rows. They are used to _retrieve data from the database more quickly than otherwise_. Indexes are created using one or more columns of a database table. The users cannot see the indexes, they are just used to speed up searches/queries.
    </details>
 
-
-  
-
 ```sql
 -- Create a unique index 'teachers_name_idx' on the column name of table teachers.
 
 CREATE UNIQUE INDEX teachers_name_idx ON lesson.teachers(name);
 ```
-
 
 ```sql
 -- Create index 'students_name_idx' that allows for duplicate values on the column name of table students.
@@ -379,7 +395,7 @@ SELECT id, name, email
 FROM lesson.students;
 ```
 
-8. **Exercise:**
+8. **Learner Challenge**
 
   * Create a view `teachers_view` with the same columns as `students_view` but for the `teachers` table.
    
@@ -389,6 +405,19 @@ FROM lesson.students;
 * **Reflection:** How does using a View simplify the work for a Data Analyst who only needs specific columns?
 
 
+
+---
+
+**Solution:**
+#### **🟢 Activity 2: The "Missing Link" Challenge**
+```dbml
+CREATE TABLE lesson.students (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR,
+    email VARCHAR,
+    class_id INTEGER REFERENCES lesson.classes(id) -- Did they remember this?
+);
+```
 
 
 ---

@@ -4,7 +4,7 @@
 * **Module:** 1.3 Data Definition & Management 
 * **Target Audience:** Adult Learners (Basic Python knowledge) 
 * **Methodology:** Flipped Classroom / Code-along / "I do, We do, You do"
-* **Tools:** [DbGate](https://dbgate.org/), [DuckDB](https://duckdb.org/)
+* **Tools:** [DbGate](https://www.dbgate.io/download-community/), [DuckDB](https://duckdb.org/)
 
 ## **🎯 Learning Objectives (Bloom's Taxonomy)**
 

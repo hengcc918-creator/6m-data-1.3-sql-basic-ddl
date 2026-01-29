@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "6m-data-1.2-intro-database",
+			"path": "../6m-data-1.2-intro-database"
+		},
+		{
+			"name": "6m-data-1.1-intro-data-science",
+			"path": "../6m-data-1.1-intro-data-science"
+		},
+		{
+			"name": "6m-data-1.0-Welcome-Onboarding",
+			"path": "../6m-data-1.0-Welcome-Onboarding"
+		},
+		{
+			"name": "6m-data-Git-GitHub-VSCode-Colab",
+			"path": "../6m-data-Git-GitHub-VSCode-Colab"
+		}
+	],
+	"settings": {}
+}
